@@ -63,7 +63,7 @@ net = tflearn.regression(net, optimizer='adam',
 # Training
 print("Training DNN...")
 model = tflearn.DNN(net, clip_gradients=0., tensorboard_verbose=0)
-model.fit(trainX, trainY, validation_set=(testX, testY), show_metric=True,
+model.fit(trainX, trainY, validation_set=(valX, valY), show_metric=True,
           batch_size=128)
 
 print("Saving Model...")

@@ -5,6 +5,7 @@ __pycache__/
 
 # Tflearn models (exceed github size restrictions)
 *.tflearn
+*.tflearn.meta
 
 # C extensions
 *.so

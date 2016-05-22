@@ -32,7 +32,9 @@ def main():
               show_metric=True, batch_size=128)
 
     print("Saving Model...")
-    model.save('%s.tflearn' % args['<model>'])
+    model_path = '%s.tflearn' % args['<model>']
+    model.save(model_path)
+    print("Saved model to %s" % model_path)
 
 
 if __name__ == '__main__':

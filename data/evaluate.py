@@ -13,6 +13,7 @@ import cPickle as pkl
 
 from docopt import docopt
 import tflearn
+from sklearn.metrics import classification_report
 
 import utils
 import models
@@ -21,16 +22,24 @@ import models
 def main():
     args = docopt(__doc__)
     data = utils.load_sst('sst_data.pkl')
-    net = models.get_model(args['<model>'])
+    model_name = args['<model>'].split('.')[0]
+    net = models.get_model(model_name)
 
-    print("Loading model definition for %s..." % args['<model>'])
+    print("Loading model definition for %s..." % model_name)
     model = tflearn.DNN(net, clip_gradients=0., tensorboard_verbose=0)
 
-    print("Loading saved model...")
-    model.load('%s.tflearn' % args['<model>'])
+    model_path = '%s.tflearn' % model_name
+    print("Loading saved model at %r..." % model_path)
+    model.load(model_path)
 
-    # TODO(sckoo): evaluate
-    print(model)
+    print("Evaluating model...")
+    test_predict = model.predict(data.testX)
+
+    y_pred = [e[0] > 0.5 for e in test_predict]
+    y_true = [e[0] for e in data.testY]
+
+    print(classification_report(y_true, y_pred))
+
 
 if __name__ == '__main__':
     main()

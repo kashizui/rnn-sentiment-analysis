@@ -40,7 +40,7 @@ def load_sst(fname):
     testX = pad_sequences(testX, maxlen=200, value=0.)
 
     # Converting labels to binary vectors
-    print("Converting labels to binary vectors.")
+    print("Converting labels to binary vectors...")
     trainY = to_categorical(trainY, nb_classes=2)
     valY = to_categorical(valY, nb_classes=2)
     testY = to_categorical(testY, nb_classes=2)

@@ -1,5 +1,7 @@
 """Train model for sentiment analysis.
 
+Try `python train.py lstm` first.
+
 Usage:
   train.py <model>
   train.py (-h | --help)

@@ -16,23 +16,20 @@ import utils
 import models
 
 
-def train(d, model_name):
-    net = models.get_model(model_name)
+def main():
+    args = docopt(__doc__)
+    data = utils.load_sst('sst_data.pkl')
+    net = models.get_model(args['<model>'])
 
     # Training
     print("Training...")
     model = tflearn.DNN(net, clip_gradients=0., tensorboard_verbose=0)
-    model.fit(d.trainX, d.trainY, validation_set=(d.valX, d.valY),
+    model.fit(data.trainX, data.trainY,
+              validation_set=(data.valX, data.valY),
               show_metric=True, batch_size=128)
 
     print("Saving Model...")
     model.save('lstm.tflearn')
-
-
-def main():
-    args = docopt(__doc__)
-    dataset = utils.load_sst('sst_data.pkl')
-    train(dataset, args['<model>'])
 
 
 if __name__ == '__main__':

@@ -1,0 +1,6 @@
+python=2.7
+anaconda
+numpy
+gensim
+docopt
+jjhelmus tensorflow=0.8.0

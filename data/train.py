@@ -9,7 +9,7 @@ Usage:
 Options:
   -h --help     Show this screen.
 """
-from __future__ import division, print_function, absolute_import
+from __future__ import division, print_function
 
 from docopt import docopt
 import tflearn

@@ -23,8 +23,8 @@ def main():
     data = utils.load_sst('sst_data.pkl')
 
     print("Loading model definition for %s..." % args['<model>'])
-    model = tflearn.DNN(net, clip_gradients=0., tensorboard_verbose=0)
     net = models.get_model(args['<model>'])
+    model = tflearn.DNN(net, clip_gradients=0., tensorboard_verbose=0)
 
     print("Training...")
     model.fit(data.trainX, data.trainY,

@@ -7,7 +7,8 @@ Usage:
   train.py (-h | --help)
 
 Options:
-  -h --help     Show this screen.
+  -h --help         Show this screen.
+  --epochs=N        Number of epochs [default: 10]
 """
 from __future__ import division, print_function
 
@@ -37,6 +38,7 @@ def main():
 
     print("Training...")
     model.fit(data.trainX, data.trainY,
+              n_epoch=args['--epochs'],
               validation_set=(data.valX, data.valY),
               show_metric=True, batch_size=128)
 

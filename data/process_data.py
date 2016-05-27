@@ -1,4 +1,4 @@
-from __future__ import division, print_function, absolute_import
+from __future__ import division, print_function
 
 import numpy as np
 import pickle as pkl
@@ -56,18 +56,17 @@ def phrases2ints(word_dict, dataset_sentences_fname):
 						in dataset_sentences_fname
 
 	"""
-	dataset = []
 	with open(dataset_sentences_fname, 'rb') as dataset_sentences:
-		dataset = [sentence.split('\t') for sentence in dataset_sentences.readlines()[2:]]
+		int_phrases = []
+		next(dataset_sentences)
+		for sentence in dataset_sentences:
+			index, phrase = sentence.split('\t')
+			int_phrase = tuple(
+				word_dict.get(word, 0)  # zero doesn't really make sense here
+				for word in phrase.split()
+			)
+			int_phrases.append((int_phrase, index))
 
-	int_phrases = {}
-	for index, phrase in dataset[:NUM_EXAMPLES]:
-		words = phrase.split()
-		int_phrase = [0]*len(words)
-		for i, word in enumerate(words):
-			if word in word_dict.keys():
-				int_phrase[i] = word_dict[word]
-		int_phrases[tuple(int_phrase)] = index
 	return int_phrases
 
 
@@ -98,17 +97,25 @@ def indices_to_sentiment(int_phrases, sentiment_labels_fname):
 	with open(sentiment_labels_fname, 'rb') as sentiment_labels:
 		lines = [item.split('|') for item in sentiment_labels.readlines()]
 		label_dict = {index: label for index, label in lines}
-		for phrase, idx in int_phrases.items():
+		for phrase, idx in int_phrases:
 			sentiment = utils.get_sentiment(float(label_dict[idx]))
 			if idx.isdigit() and int(idx) < len(phrase_sentiments):
 				phrase_sentiments[int(idx)] = [phrase, sentiment]
 	return phrase_sentiments
 
 
+def glove_word_indices(glove_fname):
+	_, words, _ = utils.build_glove(glove_fname)
+	return {word: i for i, word in enumerate(words)}
+
+
 def main():
 	# Get the phrases and their indices
 	print("Getting Phrase Dictionary...")
-	phrase_dict, word_dict = get_phrases_dict('stanfordSentimentTreebank/dictionary.txt')
+	phrase_dict, _ = get_phrases_dict('stanfordSentimentTreebank/dictionary.txt')
+
+	print("Getting glove word indices...")
+	word_dict = glove_word_indices('glove.6B/glove.6B.50d.txt')
 
 	# Convert the phrases to ints with word indices so they can be processed by Neural Network
 	print("Converting to Ints...")

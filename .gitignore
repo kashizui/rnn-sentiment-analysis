@@ -91,3 +91,9 @@ ENV/
 
 # Rope project settings
 .ropeproject
+
+# PyCharm
+.idea
+
+# Glove
+glove.6B

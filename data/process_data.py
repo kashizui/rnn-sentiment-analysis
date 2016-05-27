@@ -1,10 +1,11 @@
-from __future__ import division, print_function, absolute_import
+from __future__ import division, print_function
 
 import numpy as np
 import pickle as pkl
 import utils
 
 NUM_EXAMPLES = 2500
+
 
 def split_database(list_to_split, split_fname):
 	"""

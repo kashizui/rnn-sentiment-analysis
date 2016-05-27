@@ -6,6 +6,7 @@ import utils
 
 NUM_EXAMPLES = 2500
 
+
 def split_database(list_to_split, split_fname):
 	"""
 	Split a list of sentences into train, test, and dev groups.
@@ -28,16 +29,17 @@ def split_database(list_to_split, split_fname):
 	test = []
 	dev = []
 	with open(split_fname, 'rb') as split:
-		for line in split.readlines():
+		next(split)
+		for line in split:
 			index, group = line.split(',')
-			group = group.strip()
-			if group.isdigit() and int(index) < len(list_to_split):
-				if int(group)==1:
-					train.append(list_to_split[int(index)])
-				elif int(group)==2:
-					test.append(list_to_split[int(index)])
-				elif int(group)==3:
-					dev.append(list_to_split[int(index)])
+			group = int(group.strip())
+			if index in list_to_split:
+				if group == 1:
+					train.append(list_to_split[index])
+				elif group == 2:
+					test.append(list_to_split[index])
+				elif group == 3:
+					dev.append(list_to_split[index])
 	return train, test, dev
 
 
@@ -59,13 +61,18 @@ def phrases2ints(word_dict, dataset_sentences_fname):
 	with open(dataset_sentences_fname, 'rb') as dataset_sentences:
 		int_phrases = []
 		next(dataset_sentences)
+		num_lines_read = 0
 		for sentence in dataset_sentences:
+			if num_lines_read >= NUM_EXAMPLES:
+				break
+
 			index, phrase = sentence.split('\t')
 			int_phrase = tuple(
-				word_dict.get(word, 0)  # zero doesn't really make sense here
+				word_dict.get(word.lower(), 0)  # zero doesn't really make sense here
 				for word in phrase.split()
 			)
 			int_phrases.append((int_phrase, index))
+			num_lines_read += 1
 
 	return int_phrases
 
@@ -93,15 +100,15 @@ def get_phrases_dict(phrases_fname):
 
 
 def indices_to_sentiment(int_phrases, sentiment_labels_fname):
-	phrase_sentiments = [0]*(len(int_phrases)+2)
 	with open(sentiment_labels_fname, 'rb') as sentiment_labels:
-		lines = [item.split('|') for item in sentiment_labels.readlines()]
-		label_dict = {index: label for index, label in lines}
-		for phrase, idx in int_phrases:
-			sentiment = utils.get_sentiment(float(label_dict[idx]))
-			if idx.isdigit() and int(idx) < len(phrase_sentiments):
-				phrase_sentiments[int(idx)] = [phrase, sentiment]
-	return phrase_sentiments
+		next(sentiment_labels)
+		label_dict = dict(tuple(item.split('|')) for item in sentiment_labels)
+
+	return {
+		idx: (phrase, utils.get_sentiment(float(label_dict[idx])))  # FIXME
+		for phrase, idx in int_phrases
+		if idx.isdigit()
+	}
 
 
 def glove_word_indices(glove_fname):

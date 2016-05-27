@@ -3,12 +3,12 @@
 Try `python train.py lstm` first.
 
 Usage:
-  train.py <model>
+  train.py [--epochs=N] <model>
   train.py (-h | --help)
 
 Options:
-  -h --help         Show this screen.
   --epochs=N        Number of epochs [default: 10]
+  -h --help         Show this screen.
 """
 from __future__ import division, print_function
 
@@ -21,6 +21,7 @@ import models
 
 def main():
     args = docopt(__doc__)
+    epochs = int(args['--epochs'])
     data = utils.load_sst('sst_data.pkl')
 
     print("Loading glove vectors...")
@@ -38,7 +39,7 @@ def main():
 
     print("Training...")
     model.fit(data.trainX, data.trainY,
-              n_epoch=args['--epochs'],
+              n_epoch=epochs,
               validation_set=(data.valX, data.valY),
               show_metric=True, batch_size=128)
 

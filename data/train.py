@@ -22,9 +22,18 @@ def main():
     args = docopt(__doc__)
     data = utils.load_sst('sst_data.pkl')
 
+    print("Loading glove vectors...")
+    glove = utils.build_glove('glove.6B/glove.6B.50d.txt')
+
     print("Loading model definition for %s..." % args['<model>'])
-    net = models.get_model(args['<model>'])
+    net = models.get_model(args['<model>'], embedding_size=glove[0].shape)
     model = tflearn.DNN(net, clip_gradients=0., tensorboard_verbose=0)
+
+    print("Initializing word embedding...")
+    # Retrieve embedding layer weights (only a single weight matrix, so index is 0)
+    embedding_weights = tflearn.get_layer_variables_by_name('EmbeddingLayer')[0]
+    # Initialize with glove embedding
+    model.set_weights(embedding_weights, glove[0])
 
     print("Training...")
     model.fit(data.trainX, data.trainY,

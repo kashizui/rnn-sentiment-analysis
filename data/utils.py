@@ -8,6 +8,7 @@ import csv
 
 import numpy as np
 from tflearn.data_utils import to_categorical, pad_sequences
+import random
 
 
 Dataset = namedtuple('Dataset', 'trainX, trainY, valX, valY, testX, testY')
@@ -117,3 +118,8 @@ def glove2dict(src_filename):
     reader = csv.reader(open(src_filename), delimiter=' ',
                         quoting=csv.QUOTE_NONE)
     return {line[0]: np.array(list(map(float, line[1:]))) for line in reader}
+
+
+def randvec(n=50, lower=-0.5, upper=0.5):
+    """Returns a random vector of length `n`. `w` is ignored."""
+    return np.array([random.uniform(lower, upper) for i in range(n)])

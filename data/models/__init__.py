@@ -3,7 +3,7 @@ Models for sentiment analysis.
 """
 import importlib
 
-def get_model(name):
+def get_model(name, *args, **kwargs):
     """
     Load the model defined in the module models/<name>.py
 
@@ -11,4 +11,4 @@ def get_model(name):
     returns a tflearn network.
     """
     module = importlib.import_module('.' + name, 'models')
-    return module.build()
+    return module.build(*args, **kwargs)

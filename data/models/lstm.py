@@ -19,9 +19,12 @@ Links:
 from __future__ import division, print_function, absolute_import
 import tflearn
 
-def build():
+
+def build(embedding_size=(400000, 50)):
     net = tflearn.input_data([None, 200])
-    net = tflearn.embedding(net, input_dim=300000, output_dim=128)
+    net = tflearn.embedding(net, input_dim=embedding_size[0],
+                            output_dim=embedding_size[1],
+                            trainable=False, name='EmbeddingLayer')
     net = tflearn.lstm(net, 128)
     net = tflearn.dropout(net, 0.5)
     net = tflearn.fully_connected(net, 2, activation='softmax')

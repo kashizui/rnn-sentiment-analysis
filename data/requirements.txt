@@ -6,5 +6,5 @@ scikit-learn==0.17.1
 scipy==0.17.1
 six==1.10.0
 sklearn==0.0
-tensorflow==0.8.0
-TFLearn==0.1
+https://storage.googleapis.com/tensorflow/mac/tensorflow-0.8.0-py2-none-any.whl
+git+https://github.com/tflearn/tflearn.git@0.1.0#egg=TFLearn

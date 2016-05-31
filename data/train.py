@@ -77,17 +77,23 @@ def train(args, glove, data):
 
 
 def evaluate(args, model, data):
+    train_predict = model.predict(data.trainX)
+    print("TRAINING RESULTS")
+    print(classification_report(
+        [utils.get_sentiment(e[0]) for e in train_predict],
+        [e[0] for e in data.trainY]))
+    print()
+
     test_predict = model.predict(data.testX)
-
-    y_pred = [utils.get_sentiment(e[0]) for e in test_predict]
-    y_true = [e[0] for e in data.testY]
-
-    print(classification_report(y_true, y_pred))
+    print("TEST RESULTS")
+    print(classification_report(
+        [utils.get_sentiment(e[0]) for e in test_predict],
+        [e[0] for e in data.testY]))
+    print()
 
 
 def main():
     args = docopt(__doc__)
-
     # Print argument list for debugging
     for k, v in args.iteritems():
         print("{:<20}: {!r:<10}".format(k, v))

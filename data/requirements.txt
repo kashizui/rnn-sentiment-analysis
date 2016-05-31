@@ -1,6 +1,10 @@
-python=2.7
-anaconda
-numpy
-gensim
-docopt
-jjhelmus tensorflow=0.8.0
+docopt==0.6.2
+numpy==1.11.0
+Pillow==3.2.0
+protobuf==3.0.0b2
+scikit-learn==0.17.1
+scipy==0.17.1
+six==1.10.0
+sklearn==0.0
+tensorflow==0.8.0
+TFLearn==0.1

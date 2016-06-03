@@ -2,7 +2,7 @@
 
 Usage:
   train.py [--epochs=N] [--train-embedding] [--glove=FILE]
-           [--model=NAME] [--force-preprocess]
+           [--model=NAME] [--force-preprocess] [--learning-rate=R]
            [--parameters=FILE] [--evaluate-only] [--continue-training]
            [--hidden-dims=N] [--evaluate-test] [--embedding-dims=N]
   train.py (-h | --help)
@@ -14,6 +14,7 @@ Options:
   --parameters=FILE     Path to saved parameters. Neither --continue-training nor --evaluate-only are provided, the parameters will be overwritten.
   --hidden-dims=N       Number of dimensions to use in the hidden state. [default: 128]
   --embedding-dims=N    Number of dimensions in randomly initialized word embedding (using this option supersedes glove embedding).
+  --learning-rate=R     Learning rate as a float. [default: 0.001]
   --continue-training   Continue training with the saved parameters.
   --evaluate-only       Skip training and only evaluate the saved model.
   --train-embedding     Train the word embedding along with model.
@@ -36,20 +37,18 @@ import utils
 import models
 
 
-# The only params that actually affect the data loading and results
-REAL_PARAMS = (
-    '--glove',
-    '--model',
-    '--hidden-dims',
-    '--embedding-dims',
-    '--train-embedding',
-)
-
 CACHE_DIR = '/tmp/rnncache'
 
 
+# The only params that actually affect the data loading
+DATA_LOADING_DEPS = (
+    '--glove',
+    '--embedding-dims',
+)
+
+
 def get_arg_hash(args):
-    args = {k: args[k] for k in REAL_PARAMS}
+    args = {k: args[k] for k in DATA_LOADING_DEPS}
     return hashlib.md5(json.dumps(args)).hexdigest()
 
 
@@ -92,7 +91,8 @@ def train(args, glove, data, param_file_path):
     print("Loading model definition for %s..." % args['--model'])
     net = models.get_model(args['--model'], embedding_size=embedding_size,
                            train_embedding=args['--train-embedding'],
-                           hidden_dims=int(args['--hidden-dims']))
+                           hidden_dims=int(args['--hidden-dims']),
+                           learning_rate=float(args['--learning-rate']))
     model = tflearn.DNN(net, clip_gradients=0., tensorboard_verbose=0)
 
     if args['--evaluate-only'] or args['--continue-training']:

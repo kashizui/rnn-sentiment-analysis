@@ -71,8 +71,15 @@ def build(src_filename, delimiter=',', header=True, quoting=csv.QUOTE_MINIMAL):
 
 def build_glove(src_filename):
     """Wrapper for using `build` to read in a GloVe file as a matrix"""
-    return build(src_filename, delimiter=' ', header=False,
-                 quoting=csv.QUOTE_NONE)
+    mat, rownames, colnames = build(src_filename, delimiter=' ', header=False,
+                                    quoting=csv.QUOTE_NONE)
+    # Prepend row at index 0 for unknown tokens
+    rownames.insert(0, '<unk>')
+    mat = np.vstack([
+        np.random.uniform(low=-0.5, high=0.5, size=mat[0].shape),
+        mat
+    ])
+    return mat, rownames, colnames
 
 
 def glove2dict(src_filename):
@@ -162,7 +169,7 @@ def phrases2ints(word_dict, dataset_sentences_fname):
 
             index, phrase = sentence.split('\t')
             int_phrase = tuple(
-                word_dict.get(word.lower(), 0)  # zero doesn't really make sense here
+                word_dict.get(word.lower(), 0)  # assumes vector for unk token at row 0
                 for word in phrase.split()
             )
             int_phrases.append((int_phrase, index))
@@ -206,7 +213,7 @@ def indices_to_sentiment(int_phrases, sentiment_labels_fname):
 
 
 def glove_word_indices(glove_data):
-    words = glove_data[1]
+    words = glove_data[1]  # list of rownames
     return {word: i for i, word in enumerate(words)}
 
 

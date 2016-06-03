@@ -2,7 +2,7 @@
 Utility functions.
 """
 from __future__ import division, print_function
-from collections import namedtuple
+from collections import namedtuple, defaultdict
 import cPickle as pkl
 import csv
 
@@ -12,6 +12,8 @@ import random
 
 
 Dataset = namedtuple('Dataset', 'trainX, trainY, valX, valY, testX, testY')
+
+NUM_UNIQUE_TOKENS = 21701 + 1
 
 
 def get_sentiment(val):
@@ -208,13 +210,27 @@ def glove_word_indices(glove_data):
     return {word: i for i, word in enumerate(words)}
 
 
+def increment_word_dict():
+    class nonlocal:
+        counter = -1
+
+    def nexti():
+        nonlocal.counter += 1
+        return nonlocal.counter
+
+    return defaultdict(nexti)
+
+
 def load_sst(glove_data):
     # Get the phrases and their indices
-    print("Getting Phrase Dictionary...")
-    phrase_dict, _ = get_phrases_dict('stanfordSentimentTreebank/dictionary.txt')
+    # print("Getting Phrase Dictionary...")
+    # _, word_dict = get_phrases_dict('stanfordSentimentTreebank/dictionary.txt')
 
-    print("Getting glove word indices...")
-    word_dict = glove_word_indices(glove_data)
+    if glove_data is None:
+        word_dict = increment_word_dict()
+    else:
+        print("Getting glove word indices...")
+        word_dict = glove_word_indices(glove_data)
 
     # Convert the phrases to ints with word indices so they can be processed by Neural Network
     print("Converting to Ints...")
@@ -246,3 +262,21 @@ def load_sst(glove_data):
     testY = to_categorical(testY, nb_classes=2)
 
     return Dataset(trainX, trainY, valX, valY, testX, testY)
+
+
+# Hacky class to help duplicate stdout to log
+import sys
+class Tee(object):
+    def __init__(self, name, mode):
+        self.file = open(name, mode)
+        self.stdout = sys.stdout
+        sys.stdout = self
+    def __del__(self):
+        sys.stdout = self.stdout
+        self.file.close()
+    def write(self, data):
+        self.file.write(data)
+        self.stdout.write(data)
+    def flush(self):
+        self.file.flush()
+        self.stdout.flush()

@@ -80,7 +80,6 @@ def train(args, glove, data):
 
 def evaluate(args, model, data):
     train_predict = model.predict(data.trainX)
-    import pdb; pdb.set_trace()
     print("TRAINING RESULTS")
     print(classification_report(
         [utils.get_sentiment(e[1]) for e in train_predict],

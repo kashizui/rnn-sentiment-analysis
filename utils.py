@@ -17,7 +17,7 @@ NUM_UNIQUE_TOKENS = 21701 + 1
 
 
 def get_sentiment(val):
-    return int(val >= 0.5)
+    return int(val > 0.5)
 
 
 def unzip_examples(dataset):
@@ -204,6 +204,15 @@ def indices_to_sentiment(int_phrases, sentiment_labels_fname):
     with open(sentiment_labels_fname, 'rb') as sentiment_labels:
         next(sentiment_labels)
         label_dict = dict(tuple(item.split('|')) for item in sentiment_labels)
+    #
+    #
+    # from collections import Counter
+    # c = Counter()
+    # for phrase, idx in int_phrases:
+    #     c[get_sentiment(float(label_dict[idx]))] += 1
+    #
+    # print(c.most_common())
+    # exit()
 
     return {
         idx: (phrase, get_sentiment(float(label_dict[idx])))  # FIXME

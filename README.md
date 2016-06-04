@@ -5,8 +5,6 @@ Use Recurrent Neural Networks to identify the sentiment of an input text.
 
 Created by Nico Cserepy, Stephen Koo, and Ben Weems
 
-Everything is in the `data` directory at the moment.
-
 Start with the following command to list all the possible options.
 
     python train.py -h

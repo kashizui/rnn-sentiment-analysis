@@ -16,8 +16,13 @@ Dataset = namedtuple('Dataset', 'trainX, trainY, valX, valY, testX, testY')
 NUM_UNIQUE_TOKENS = 21701 + 1
 
 
-def get_sentiment(val):
-    return int(val > 0.5)
+def get_sentiment(val, upper_lim=.5, lower_lim=.5000001):
+    if val > upper_lim:
+        return 1
+    elif val < lower_lim:
+        return 0
+    else:
+        return None
 
 
 def unzip_examples(dataset):
@@ -214,10 +219,20 @@ def indices_to_sentiment(int_phrases, sentiment_labels_fname):
     # print(c.most_common())
     # exit()
 
+    sentiments = [
+        float(label_dict[idx])  # FIXME
+        for key, idx in int_phrases
+        if idx.isdigit()
+    ]
+
+    upper_lim = sorted(sentiments)[int(len(sentiments)*0.7)]
+    lower_lim = sorted(sentiments)[int(len(sentiments)*0.3)]
+
     return {
-        idx: (phrase, get_sentiment(float(label_dict[idx])))  # FIXME
+        idx: (phrase, get_sentiment(float(label_dict[idx]), upper_lim, lower_lim))  # FIXME
         for phrase, idx in int_phrases
         if idx.isdigit()
+        and get_sentiment(float(label_dict[idx]), upper_lim, lower_lim) is not None
     }
 
 

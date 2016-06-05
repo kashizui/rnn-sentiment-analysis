@@ -93,7 +93,7 @@ def train(args, glove, data, param_file_path):
                            train_embedding=args['--train-embedding'],
                            hidden_dims=int(args['--hidden-dims']),
                            learning_rate=float(args['--learning-rate']))
-    model = tflearn.DNN(net, clip_gradients=0., tensorboard_verbose=0)
+    model = tflearn.DNN(net, clip_gradients=5., tensorboard_verbose=0)
 
     if args['--evaluate-only'] or args['--continue-training']:
         print("Loading saved parameters from %s" % param_file_path)

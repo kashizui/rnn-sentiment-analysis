@@ -110,7 +110,8 @@ def train(args, glove, data, param_file_path):
         model.fit(data.trainX, data.trainY,
                   n_epoch=int(args['--epochs']),
                   validation_set=(data.valX, data.valY),
-                  show_metric=True, batch_size=128)
+                  show_metric=True, batch_size=128,
+                  run_id=os.path.splitext(param_file_path)[0])
 
         print("Saving parameters to %s" % param_file_path)
         model.save(param_file_path)
@@ -122,23 +123,26 @@ def evaluate(args, model, data):
     train_predict = model.predict(data.trainX)
     print("TRAINING RESULTS")
     print(classification_report(
+        [e[1] for e in data.trainY],
         [utils.get_sentiment(e[1]) for e in train_predict],
-        [e[1] for e in data.trainY]))
+    ))
     print()
 
     test_predict = model.predict(data.valX)
     print("DEV RESULTS")
     print(classification_report(
+        [e[1] for e in data.valY],
         [utils.get_sentiment(e[1]) for e in test_predict],
-        [e[1] for e in data.valY]))
+    ))
     print()
 
     if args['--evaluate-test']:
         test_predict = model.predict(data.testX)
         print("TEST RESULTS")
         print(classification_report(
+            [e[1] for e in data.testY],
             [utils.get_sentiment(e[1]) for e in test_predict],
-            [e[1] for e in data.testY]))
+        ))
         print()
 
 
